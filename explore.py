@@ -30,4 +30,37 @@ top_tags.to_csv("top_tags.csv", encoding="utf-8")
 print("Top 30 tags:")
 print(top_tags)
 print("Total number of tags:", len(tags))
+GENRES = [
+    "fantasy",
+    "young-adult",
+    "classics",
+    "romance",
+    "mystery",
+    "non-fiction",
+    "historical-fiction",
+    "science-fiction",
+    "sci-fi",
+    "contemporary",
+    "horror",
+    "urban-fantasy",
+    "nonfiction",
+    "thriller",
+    "vampires",
+    "adventure",
+    "history",
+    "historical",
+    "humor",
+    "novels",
+    "dystopia",
+    "children",
+    "magic",
+    "crime",
+    "comics",
+    "memoir",
+    "biography",
+    "philosophy",
+    "science",
+    "novel",
+    "poetry",
+]
 

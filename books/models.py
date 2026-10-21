@@ -14,6 +14,7 @@ class Genre(models.Model):
         return self.name
 
 class Book(models.Model):
+    source_id = models.IntegerField(unique=True, null=True, blank=True)
     title = models.CharField(max_length=100)
     authors = models.ManyToManyField(Author) # amny to many doesnt accept cascade delete
     genres = models.ManyToManyField(Genre, blank=True)
