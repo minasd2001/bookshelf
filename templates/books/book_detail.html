@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}{{ book.title }} | Bookshelf{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-3">
+    {% if book.cover_url %}
+      <img src="{{ book.cover_url }}" alt="Cover of {{ book.title }}" class="img-fluid">
+    {% else %}
+      <div class="bg-secondary text-white p-5 text-center">No cover</div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-9">
+    <h1>{{ book.title }}</h1>
+    <p>
+      by
+      {% for author in book.authors.all %}
+        {{ author.name }}{% if not forloop.last %}, {% endif %}
+      {% endfor %}
+    </p>
+
+    <p>
+      {% for genre in book.genres.all %}
+        <span class="badge bg-secondary">{{ genre.name }}</span>
+      {% endfor %}
+    </p>
+
+    {% if book.synopsis %}
+      <p>{{ book.synopsis }}</p>
+    {% else %}
+      <p>No synopsis available.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+ 

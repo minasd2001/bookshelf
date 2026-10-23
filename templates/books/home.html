@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Home | Bookshelf{% endblock %}
+
+{% block content %}
+<h1>Some popular books</h1>
+
+<div class="row">
+  {% for book in books %}
+    <div class="col-6 col-md-2 mb-4">
+      <a href="{% url 'book_detail' book.pk %}" class="text-decoration-none">
+        {% if book.cover_url %}
+          <img src="{{ book.cover_url }}" alt="Cover of {{ book.title }}" class="img-fluid">
+        {% else %}
+          <div class="bg-secondary text-white p-4 text-center">No cover</div>
+        {% endif %}
+        <div class="mt-2">{{ book.title }}</div>
+      </a>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
