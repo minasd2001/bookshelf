@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}{{ owner.username }} | Bookshelf{% endblock %}
+
+{% block content %}
+<div class="mx-auto" style="max-width: 800px;">
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body d-flex align-items-center gap-4 p-4">
+
+      {% if profile.avatar %}
+        <img src="{{ profile.avatar.url }}" alt="{{ owner.username }}"
+             class="rounded-circle"
+             style="width: 120px; height: 120px; object-fit: cover;">
+      {% else %}
+        <div class="rounded-circle bg-secondary text-white d-flex
+                    align-items-center justify-content-center"
+             style="width: 120px; height: 120px; font-size: 2.5rem;">
+          {{ owner.username|first|upper }}
+        </div>
+      {% endif %}
+
+      <div>
+        <h1 class="h3 mb-1">{{ owner.username }}</h1>
+        <div class="text-muted small mb-2">Member since {{ owner.date_joined|date:"F Y" }}</div>
+
+        {% if profile.bio %}
+          <p class="mb-2">{{ profile.bio|linebreaksbr }}</p>
+        {% else %}
+          <p class="text-muted mb-2">No bio yet.</p>
+        {% endif %}
+
+        {% if user == owner %}
+          <a href="{% url 'profile_edit' %}" class="btn btn-outline-dark btn-sm">Edit profile</a>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Shelves, reviews and follows will go here in later steps -->
+</div>
+{% endblock %}

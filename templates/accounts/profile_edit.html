@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Edit profile | Bookshelf{% endblock %}
+
+{% block content %}
+<div class="mx-auto" style="max-width: 500px;">
+  <h1 class="h3 mb-3">Edit profile</h1>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-dark">Save</button>
+    <a href="{% url 'profile_detail' user.username %}" class="btn btn-link">Cancel</a>
+  </form>
+</div>
+{% endblock %}
