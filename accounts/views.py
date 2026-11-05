@@ -4,6 +4,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 from .forms import ProfileForm
+from social.services import shelves_for
+from .models import Profile
+from social.services import reviews_by_user, shelves_for
 # Create your views here.
 
 def register(request):
@@ -19,11 +22,16 @@ def register(request):
 
 
 def profile_detail(request, username):
-    owner = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user__username=username)
     return render(
         request,
         "accounts/profile.html",
-        {"owner": owner, "profile": owner.profile},
+        {
+            "owner": profile.user,
+            "profile": profile,
+            "shelves": shelves_for(profile.user),
+            "reviews": reviews_by_user(profile.user),
+        },
     )
 
 @login_required

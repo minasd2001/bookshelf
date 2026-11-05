@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import ShelfEntry, Review
 
-# Register your models here.
+admin.site.register(ShelfEntry)
+admin.site.register(Review)

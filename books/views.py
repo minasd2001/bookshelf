@@ -2,15 +2,29 @@ from django.shortcuts import render, get_object_or_404
 from .models import Book
 from django.core.paginator import Paginator
 from django.db.models import Q # for multiple field search
+from social import services as shelf_services
+from social.models import ShelfEntry
+from social import services as social_services
+from social.forms import ReviewForm
 # Create your views here.
 
 def home(request):
     books = Book.objects.order_by("source_id")[:12]
     return render(request, "books/home.html", {"books": books})
 
+
 def book_detail(request, pk):
     book = get_object_or_404(Book, pk=pk)
-    return render(request, "books/book_detail.html", {"book": book})
+    my_review = social_services.review_by(request.user, book)
+    context = {
+        "book": book,
+        "my_status": social_services.shelf_status(request.user, book),
+        "statuses": ShelfEntry.Status.choices,
+        "my_review": my_review,
+        "review_form": ReviewForm(instance=my_review),
+        "reviews": social_services.reviews_for_book(book),
+    }
+    return render(request, "books/book_detail.html", context)
 
   
 def search(request):

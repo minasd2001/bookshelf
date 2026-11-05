@@ -20,7 +20,27 @@
         {{ author.name }}{% if not forloop.last %}, {% endif %}
       {% endfor %}
     </p>
-
+    {% if user.is_authenticated %}
+      <form action="{% url 'shelf_set' book.pk %}" method="post" class="mb-3">
+        {% csrf_token %}
+        <div class="d-flex flex-wrap gap-2">
+          {% for value, label in statuses %}
+            <button type="submit" name="status" value="{{ value }}"
+                    class="btn btn-sm {% if value == my_status %}btn-dark{% else %}btn-outline-dark{% endif %}">
+              {{ label }}
+            </button>
+          {% endfor %}
+          {% if my_status %}
+            <button type="submit" name="status" value="remove"
+                    class="btn btn-sm btn-link text-danger">Remove</button>
+          {% endif %}
+        </div>
+      </form>
+    {% else %}
+      <p class="text-muted">
+        <a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to add this book to a shelf.
+      </p>
+    {% endif %}
     <p>
       {% for genre in book.genres.all %}
         <span class="badge bg-secondary">{{ genre.name }}</span>
@@ -32,6 +52,45 @@
     {% else %}
       <p>No synopsis available.</p>
     {% endif %}
+
+    <hr>
+    <h2 class="h4">Reviews</h2>
+
+    {% if user.is_authenticated %}
+      <form action="{% url 'review_save' book.pk %}" method="post" class="mb-2">
+        {% csrf_token %}
+        <div class="mb-2">
+          <div class="small text-muted mb-1">Your rating</div>
+          {% for radio in review_form.rating %}
+            <div class="form-check form-check-inline">
+              {{ radio.tag }}
+              <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}★</label>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="mb-2">{{ review_form.text }}</div>
+        <button type="submit" class="btn btn-dark btn-sm">
+          {% if my_review %}Update review{% else %}Post review{% endif %}
+        </button>
+      </form>
+      {% if my_review %}
+        <form action="{% url 'review_delete' book.pk %}" method="post" class="mb-3">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-link btn-sm text-danger">Delete my review</button>
+        </form>
+      {% endif %}
+    {% endif %}
+
+    {% for review in reviews %}
+      <div class="mb-3">
+        <a href="{% url 'profile_detail' review.user.username %}">{{ review.user.username }}</a>
+        <span class="text-warning">{{ review.stars }}</span>
+        <span class="text-muted small">{{ review.created|date:"j M Y" }}</span>
+        {% if review.text %}<p class="mb-0">{{ review.text|linebreaksbr }}</p>{% endif %}
+      </div>
+    {% empty %}
+      <p class="text-muted">No reviews yet.</p>
+    {% endfor %}
   </div>
 </div>
 {% endblock %}

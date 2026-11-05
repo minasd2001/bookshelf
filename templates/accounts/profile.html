@@ -37,6 +37,48 @@
     </div>
   </div>
 
-  <!-- Shelves, reviews and follows will go here in later steps -->
+  <h2 class="h4 mb-3">Bookshelves</h2>
+
+  {% for label, shelf_books in shelves %}
+    <div class="mb-4">
+      <h3 class="h5">
+        {{ label }}
+        <span class="badge bg-secondary">{{ shelf_books|length }}</span>
+      </h3>
+
+      {% if shelf_books %}
+        <div class="row">
+          {% for book in shelf_books %}
+            <div class="col-4 col-md-2 mb-3">
+              <a href="{% url 'book_detail' book.pk %}" class="text-decoration-none">
+                {% if book.cover_url %}
+                  <img src="{{ book.cover_url }}" alt="Cover of {{ book.title }}"
+                      title="{{ book.title }}" class="img-fluid rounded">
+                {% else %}
+                  <div class="bg-secondary text-white small p-3 text-center rounded">
+                    {{ book.title }}
+                  </div>
+                {% endif %}
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-muted small">Nothing here yet.</p>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  <h2 class="h4 mb-3">Reviews</h2>
+  {% for review in reviews %}
+    <div class="mb-3">
+      <a href="{% url 'book_detail' review.book.pk %}">{{ review.book.title }}</a>
+      <span class="text-warning">{{ review.stars }}</span>
+      {% if review.text %}<p class="mb-0">{{ review.text|linebreaksbr }}</p>{% endif %}
+    </div>
+  {% empty %}
+    <p class="text-muted">No reviews yet.</p>
+  {% endfor %}
+  
 </div>
 {% endblock %}
