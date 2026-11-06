@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Book
 from django.core.paginator import Paginator
-from django.db.models import Q # for multiple field search
+from django.db.models import Q, Avg # for multiple field search
 from social import services as shelf_services
 from social.models import ShelfEntry
 from social import services as social_services
@@ -23,6 +23,8 @@ def book_detail(request, pk):
         "my_review": my_review,
         "review_form": ReviewForm(instance=my_review),
         "reviews": social_services.reviews_for_book(book),
+        "rating": social_services.rating_summary(book),
+        "following_ids": social_services.following_ids(request.user),
     }
     return render(request, "books/book_detail.html", context)
 
@@ -32,10 +34,12 @@ def search(request):
     results = Book.objects.none()
 
     if query:
+        matching = Book.objects.filter(
+            Q(title__icontains=query) | Q(authors__name__icontains=query)
+        ).values("pk")
         results = (
-            Book.objects
-            .filter(Q(title__icontains=query) | Q(authors__name__icontains=query))
-            .distinct()
+            Book.objects.filter(pk__in=matching)
+            .annotate(avg_rating=Avg("reviews__rating"))
             .order_by("title")
             .prefetch_related("authors")
         )

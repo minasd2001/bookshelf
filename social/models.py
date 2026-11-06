@@ -23,10 +23,11 @@ class ShelfEntry(models.Model):
             ),
         ]
 
+    # __str__ controls how an object is displayed as text
     def __str__(self):
         return f"{self.user.username}: {self.book.title} ({self.status})"
 
-
+                                                                                                                                                                                                                                                                                                          
 # movies/models.py
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviews")
@@ -47,3 +48,20 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.user.username}: {self.book.title} ({self.rating})"
+
+
+class Follow(models.Model):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name="i_follow")
+    followed = models.ForeignKey(User, on_delete=models.CASCADE, related_name="they_follow_me")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["follower", "followed"], name="unique_follow"
+            ),
+            models.CheckConstraint( # don't follow yourself
+                condition=~models.Q(follower=models.F("followed")), name="no_follow_yourself"),
+        ]
+
+    def __str__(self):
+        return f"{self.follower.username} follows  {self.followed.username}"    

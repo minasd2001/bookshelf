@@ -52,8 +52,10 @@
                 {{ author.name }}{% if not forloop.last %}, {% endif %}
               {% endfor %}
             </div>
-          </div>
-
+            {% if book.avg_rating %}
+              <div class="small"><span class="text-warning">★</span> {{ book.avg_rating|floatformat:1 }}</div>
+            {% endif %}
+            </div>
         </div>
       </div>
     </a>

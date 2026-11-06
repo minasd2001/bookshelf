@@ -10,6 +10,17 @@
     {% else %}
       <div class="bg-secondary text-white p-5 text-center">No cover</div>
     {% endif %}
+    <div class="mt-3">
+      {% for bar in rating.bars %}
+        <div class="d-flex align-items-center gap-2 mb-1 small">
+          <span style="width: 2rem;">{{ bar.stars }}★</span>
+          <div class="progress flex-grow-1" style="height: 8px;">
+            <div class="progress-bar bg-warning" style="width: {{ bar.percent }}%"></div>
+          </div>
+          <span class="text-muted text-end" style="width: 3.5rem;">{{ bar.percent }}%</span>
+        </div>
+      {% endfor %}
+    </div>
   </div>
 
   <div class="col-md-9">
@@ -20,6 +31,14 @@
         {{ author.name }}{% if not forloop.last %}, {% endif %}
       {% endfor %}
     </p>
+    {% if rating.total %}
+      <div class="h5 mb-3">
+        <span class="text-warning">★</span> {{ rating.average }}
+        <small class="text-muted">/ 5 · {{ rating.total }} rating{{ rating.total|pluralize }}</small>
+      </div>
+    {% else %}
+      <div class="text-muted mb-3">No ratings yet</div>
+    {% endif %}
     {% if user.is_authenticated %}
       <form action="{% url 'shelf_set' book.pk %}" method="post" class="mb-3">
         {% csrf_token %}
@@ -84,6 +103,7 @@
     {% for review in reviews %}
       <div class="mb-3">
         <a href="{% url 'profile_detail' review.user.username %}">{{ review.user.username }}</a>
+        {% include "social/follow_button.html" with person=review.user following=following_ids %}
         <span class="text-warning">{{ review.stars }}</span>
         <span class="text-muted small">{{ review.created|date:"j M Y" }}</span>
         {% if review.text %}<p class="mb-0">{{ review.text|linebreaksbr }}</p>{% endif %}

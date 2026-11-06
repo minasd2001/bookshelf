@@ -1,11 +1,12 @@
-from .models import ShelfEntry, Review
-
+from .models import ShelfEntry, Review, Follow
+from django.db.models import Avg, Count
+from django.contrib.auth.models import User
 
 def set_shelf(user, book, status):
     """Put a book on a shelf, moving it if it's already on another one."""
     if status not in ShelfEntry.Status.values:
         raise ValueError("Invalid shelf status")
-    entry, _ = ShelfEntry.objects.update_or_create(
+    entry, _ = ShelfEntry.objects.update_or_create( # saving in db
         user=user, book=book, defaults={"status": status}
     )
     return entry
@@ -58,3 +59,47 @@ def reviews_for_book(book):
 
 def reviews_by_user(user):
     return Review.objects.filter(user=user).select_related("book")
+
+
+def rating_summary(book):
+    reviews = Review.objects.filter(book=book)
+
+    average = reviews.aggregate(avg=Avg("rating"))["avg"]       # None if no reviews
+    counts = dict(reviews.values_list("rating").annotate(n=Count("id")))
+    total = sum(counts.values())
+
+    bars = []
+    for stars in range(5, 0, -1):                                # 5, 4, 3, 2, 1
+        n = counts.get(stars, 0)                                 # 0 if nobody gave this
+        percent = round(n * 100 / total) if total else 0
+        bars.append({"stars": stars, "count": n, "percent": percent})
+
+    return {
+        "average": round(average, 1) if average is not None else None, #avoids decimals
+        "total": total,
+        "bars": bars,
+    }
+
+
+def follow(follower, followed):
+    if follower == followed:
+        raise ValueError("Can't follow yourself")
+    Follow.objects.get_or_create(follower=follower, followed=followed)
+
+
+def unfollow(follower, followed):
+    Follow.objects.filter(follower=follower, followed=followed).delete()
+
+
+def following_ids(user):
+    if not user.is_authenticated:
+        return set()
+    return set(Follow.objects.filter(follower=user).values_list("followed_id", flat=True))
+
+
+def followers_of(user):
+    return User.objects.filter(i_follow__followed=user)
+
+
+def following_of(user):
+    return User.objects.filter(they_follow_me__follower=user)

@@ -22,13 +22,16 @@
       <div>
         <h1 class="h3 mb-1">{{ owner.username }}</h1>
         <div class="text-muted small mb-2">Member since {{ owner.date_joined|date:"F Y" }}</div>
-
+        <div class="text-muted small mb-2">
+          {{ followers_count }} follower{{ followers_count|pluralize }} ·
+          {{ following_count }} following
+        </div>
         {% if profile.bio %}
           <p class="mb-2">{{ profile.bio|linebreaksbr }}</p>
         {% else %}
           <p class="text-muted mb-2">No bio yet.</p>
         {% endif %}
-
+        {% include "social/follow_button.html" with person=owner following=following_ids %}
         {% if user == owner %}
           <a href="{% url 'profile_edit' %}" class="btn btn-outline-dark btn-sm">Edit profile</a>
         {% endif %}

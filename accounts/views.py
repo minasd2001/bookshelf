@@ -7,6 +7,9 @@ from .forms import ProfileForm
 from social.services import shelves_for
 from .models import Profile
 from social.services import reviews_by_user, shelves_for
+from social.services import (
+    followers_of, following_ids, following_of, reviews_by_user, shelves_for,
+)
 # Create your views here.
 
 def register(request):
@@ -23,14 +26,18 @@ def register(request):
 
 def profile_detail(request, username):
     profile = get_object_or_404(Profile, user__username=username)
+    owner = profile.user
     return render(
         request,
         "accounts/profile.html",
         {
-            "owner": profile.user,
+            "owner": owner,
             "profile": profile,
             "shelves": shelves_for(profile.user),
             "reviews": reviews_by_user(profile.user),
+            "following_ids": following_ids(request.user),
+            "followers_count": followers_of(owner).count(),
+            "following_count": following_of(owner).count(),
         },
     )
 
