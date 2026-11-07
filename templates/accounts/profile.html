@@ -23,8 +23,10 @@
         <h1 class="h3 mb-1">{{ owner.username }}</h1>
         <div class="text-muted small mb-2">Member since {{ owner.date_joined|date:"F Y" }}</div>
         <div class="text-muted small mb-2">
-          {{ followers_count }} follower{{ followers_count|pluralize }} ·
-          {{ following_count }} following
+          <a href="{% url 'followers_list' owner.username %}" class="text-muted">
+            {{ followers_count }} follower{{ followers_count|pluralize }}</a> ·
+          <a href="{% url 'following_list' owner.username %}" class="text-muted">
+            {{ following_count }} following</a>
         </div>
         {% if profile.bio %}
           <p class="mb-2">{{ profile.bio|linebreaksbr }}</p>

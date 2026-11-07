@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from .forms import ReviewForm
 from books.models import Book
@@ -66,4 +66,23 @@ def unfollow_user(request, username):
     target = get_object_or_404(User, username=username)
     services.unfollow(request.user, target)
     return redirect(_back_to(request, reverse("profile_detail", args=[username])))
-     
+
+def followers_list(request, username):
+    owner = get_object_or_404(User, username=username)
+    return render(request, "social/follow_list.html", {
+        "owner": owner,
+        "title": "Followers",
+        "people": services.followers_of(owner).select_related("profile"),
+        "following_ids": services.following_ids(request.user),
+    })
+
+
+def following_list(request, username):
+    owner = get_object_or_404(User, username=username)
+    return render(request, "social/follow_list.html", {
+        "owner": owner,
+        "title": "Following",
+        "people": services.following_of(owner).select_related("profile"),
+        "following_ids": services.following_ids(request.user),
+    })
+
