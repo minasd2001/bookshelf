@@ -52,13 +52,13 @@ def review_by(user, book):
     return Review.objects.filter(user=user, book=book).first()
 
 def reviews_for_book(book):
-    return Review.objects.filter(book=book).select_related("user")
+    return Review.objects.filter(book=book).exclude(text="").select_related("user")
 
 # select_related loads each review’s user (or book) in the same query
 #  so 20 reviews don’t cause 20 extra queries
 
 def reviews_by_user(user):
-    return Review.objects.filter(user=user).select_related("book")
+    return Review.objects.filter(user=user).exclude(text="").select_related("book")
 
 
 def rating_summary(book):
