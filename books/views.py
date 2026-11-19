@@ -4,13 +4,20 @@ from django.core.paginator import Paginator
 from django.db.models import Q, Avg # for multiple field search
 from social import services as shelf_services
 from social.models import ShelfEntry
+from social import recommendations
 from social import services as social_services
 from social.forms import ReviewForm
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 # Create your views here.
 
 def home(request):
     books = Book.objects.order_by("source_id")[:12]
-    return render(request, "books/home.html", {"books": books})
+    recs = []
+    if request.user.is_authenticated:
+        recs = recommendations.default_recommender().for_user(request.user)
+    return render(request, "books/home.html", {"books": books, "recs":recs})
 
 
 def book_detail(request, pk):

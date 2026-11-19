@@ -32,6 +32,12 @@ class Command(BaseCommand):
         ratings = pd.read_csv("data/ratings.csv")
         to_read = pd.read_csv("data/to_read.csv")
 
+        catalog = pd.read_csv("data/books.csv", usecols=["id", "book_id"])
+        id_to_source = dict(zip(catalog["id"], catalog["book_id"]))
+
+        ratings["book_id"] = ratings["book_id"].map(id_to_source)
+        to_read["book_id"] = to_read["book_id"].map(id_to_source)
+
         books = Book.objects.in_bulk(field_name="source_id")
         known = list(books)
 

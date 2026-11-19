@@ -6,7 +6,7 @@ from books.models import Book
 
 class ShelfEntry(models.Model):
     class Status(models.TextChoices):
-        FINISHED = "finished", "Finshed"
+        FINISHED = "finished", "Finished"
         CURRENTLY_READING = "currently reading", "Currently Reading"
         DID_NOT_FINISH = "dnf", "Didn't finish"
         TO_READ = "to_read", "To read"

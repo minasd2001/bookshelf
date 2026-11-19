@@ -3,6 +3,24 @@
 {% block title %}Home | Bookshelf{% endblock %}
 
 {% block content %}
+{% if recs %}
+  <h2 class="h4 mb-3">Recommended for you</h2>
+  <div class="row mb-4">
+    {% for rec in recs %}
+      <div class="col-6 col-md-2 mb-4">
+        <a href="{% url 'book_detail' rec.book.pk %}" class="text-decoration-none">
+          {% if rec.book.cover_url %}
+            <img src="{{ rec.book.cover_url }}" alt="Cover of {{ rec.book.title }}" class="img-fluid">
+          {% else %}
+            <div class="bg-secondary text-white p-4 text-center">No cover</div>
+          {% endif %}
+          <div class="mt-2">{{ rec.book.title }}</div>
+        </a>
+        <div class="text-muted small">{{ rec.reasons.0 }}</div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
 <h1>Some popular books</h1>
 
 <div class="row">

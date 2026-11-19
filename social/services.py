@@ -17,7 +17,7 @@ def remove_from_shelf(user, book):
 
 
 def shelf_status(user, book):
-    """The status of this book for this user, or None."""
+    
     if not user.is_authenticated:
         return None
     entry = ShelfEntry.objects.filter(user=user, book=book).first()
@@ -41,6 +41,7 @@ def save_review(user, book, rating, text):
     review,_ = Review.objects.update_or_create(
         user=user, book=book, defaults={"rating": rating, "text": text}
     )
+    set_shelf(user, book, 'finished')
     return review
 
 def delete_review(user, book):
