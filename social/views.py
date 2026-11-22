@@ -7,7 +7,7 @@ from . import services
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.contrib.auth.models import User
 from django.urls import reverse
-
+from django.contrib import messages
 
 @login_required
 @require_POST
@@ -33,6 +33,9 @@ def review_save(request, book_id):
             request.user, book, form.cleaned_data["rating"], form.cleaned_data["text"]
             #the form deliberately has no user or book field, so the browser has no way to say whose review it is
         )
+        messages.success(request, "Your review was saved.")
+    else:
+        messages.error(request, "Please choose a star rating.")
     return redirect("book_detail", pk=book.pk)
 
 @login_required

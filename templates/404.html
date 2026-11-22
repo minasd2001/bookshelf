@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Page not found | Bookshelf{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+  <h1 class="page-title">404</h1>
+  <p class="text-muted mb-4">We couldn't find that page. The book may have moved, or the address may be wrong.</p>
+  <a href="{% url 'home' %}" class="btn-ink">Back to home</a>
+</div>
+{% endblock %}
