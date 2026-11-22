@@ -12,11 +12,7 @@
       <div class="col-6 col-md-4 col-lg-2">
         <a href="{% url 'book_detail' book.pk %}" class="book-card">
           <div class="book-cover">
-            {% if book.cover_url %}
-              <img src="{{ book.cover_url }}" alt="Cover of {{ book.title }}">
-            {% else %}
-              <div class="no-cover">No cover</div>
-            {% endif %}
+            {% if book.cover_url %}<img src="{{ book.cover_url }}" alt="Cover of {{ book.title }}">{% else %}<div class="no-cover">No cover</div>{% endif %}
           </div>
           <div class="book-ledge"></div>
           <div class="book-title">{{ book.title }}</div>
@@ -29,15 +25,9 @@
 
   {% if page.paginator.num_pages > 1 %}
     <nav class="d-flex justify-content-between align-items-center my-4">
-      {% if page.has_previous %}
-        <a href="?page={{ page.previous_page_number }}">&laquo; Previous</a>
-      {% else %}<span></span>{% endif %}
-
+      {% if page.has_previous %}<a class="btn-ink-outline btn-small" href="?page={{ page.previous_page_number }}">&laquo; Previous</a>{% else %}<span></span>{% endif %}
       <span class="text-muted small">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
-
-      {% if page.has_next %}
-        <a href="?page={{ page.next_page_number }}">Next &raquo;</a>
-      {% else %}<span></span>{% endif %}
+      {% if page.has_next %}<a class="btn-ink-outline btn-small" href="?page={{ page.next_page_number }}">Next &raquo;</a>{% else %}<span></span>{% endif %}
     </nav>
   {% endif %}
 </div>

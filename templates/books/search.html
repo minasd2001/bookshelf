@@ -4,82 +4,47 @@
 
 {% block content %}
 <style>
-  .result-row {
-    transition: box-shadow 0.15s ease, transform 0.15s ease;
-  }
-  .result-row:hover {
-    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .12);
-    transform: translateY(-2px);
-  }
-  .result-cover {
-    width: 90px;
-    height: 135px;
-    object-fit: cover;
-    flex-shrink: 0;
-  }
+  .result-row { display: flex; align-items: center; gap: 1.1rem; padding: .9rem 1.1rem; margin-bottom: .8rem; background: var(--bs-card); border: 1px solid var(--bs-line); border-radius: 12px; color: inherit; text-decoration: none; transition: transform .15s ease, border-color .15s ease; }
+  .result-row:hover { transform: translateY(-2px); border-color: var(--bs-accent); color: inherit; }
+  .result-cover { width: 72px; flex-shrink: 0; }
+  .result-title { font-family: 'Fraunces', Georgia, serif; font-weight: 500; font-size: 1.15rem; line-height: 1.25; }
+  .result-authors { color: var(--bs-muted); font-size: .92rem; margin-top: .15rem; }
+  .result-rating { font-size: .88rem; margin-top: .3rem; }
+  .result-rating .star { color: var(--bs-star); }
 </style>
 
-<div class="mx-auto" style="max-width: 800px;">
-
+<div class="mx-auto pb-5" style="max-width: 820px;">
   {% if query %}
-    <h1 class="h3 mb-1">Results for "{{ query }}"</h1>
+    <h1 class="page-title">Results for “{{ query }}”</h1>
     <p class="text-muted mb-4">{{ page.paginator.count }} book{{ page.paginator.count|pluralize }} found</p>
   {% else %}
-    <h1 class="h3 mb-1">Search</h1>
+    <h1 class="page-title">Search</h1>
     <p class="text-muted mb-4">Type a title or author in the search bar.</p>
   {% endif %}
 
   {% for book in page %}
-    <a href="{% url 'book_detail' book.pk %}" class="text-decoration-none text-reset">
-      <div class="result-row card border-0 shadow-sm mb-3">
-        <div class="card-body d-flex align-items-center gap-3 p-3">
-
-          {% if book.cover_url %}
-            <img src="{{ book.cover_url }}" alt="Cover of {{ book.title }}"
-                 class="result-cover rounded">
-          {% else %}
-            <div class="result-cover rounded bg-secondary text-white
-                        d-flex align-items-center justify-content-center small">
-              No cover
-            </div>
-          {% endif %}
-
-          <div>
-            <h2 class="h5 mb-1">{{ book.title }}</h2>
-            <div class="text-muted small">
-              by
-              {% for author in book.authors.all %}
-                {{ author.name }}{% if not forloop.last %}, {% endif %}
-              {% endfor %}
-            </div>
-            {% if book.avg_rating %}
-              <div class="small"><span class="text-warning">★</span> {{ book.avg_rating|floatformat:1 }}</div>
-            {% endif %}
-            </div>
+    <a href="{% url 'book_detail' book.pk %}" class="result-row">
+      <div class="result-cover">
+        <div class="book-cover">
+          {% if book.cover_url %}<img src="{{ book.cover_url }}" alt="Cover of {{ book.title }}">{% else %}<div class="no-cover small">No cover</div>{% endif %}
         </div>
+      </div>
+      <div>
+        <div class="result-title">{{ book.title }}</div>
+        <div class="result-authors">by {% for author in book.authors.all %}{{ author.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</div>
+        {% if book.avg_rating %}<div class="result-rating"><span class="star">★</span> {{ book.avg_rating|floatformat:1 }}</div>{% endif %}
       </div>
     </a>
   {% empty %}
-    {% if query %}
-      <p class="text-muted">Nothing found. Try a different title or author.</p>
-    {% endif %}
+    {% if query %}<p class="text-muted">Nothing found. Try a different title or author.</p>{% endif %}
   {% endfor %}
 
   {% if page.paginator.num_pages > 1 %}
     <nav class="d-flex justify-content-between align-items-center my-4">
-      {% if page.has_previous %}
-        <a class="btn btn-outline-secondary btn-sm"
-           href="?q={{ query|urlencode }}&page={{ page.previous_page_number }}">&laquo; Previous</a>
-      {% else %}<span></span>{% endif %}
-
+      {% if page.has_previous %}<a class="btn-ink-outline btn-small" href="?q={{ query|urlencode }}&page={{ page.previous_page_number }}">&laquo; Previous</a>{% else %}<span></span>{% endif %}
       <span class="text-muted small">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
-
-      {% if page.has_next %}
-        <a class="btn btn-outline-secondary btn-sm"
-           href="?q={{ query|urlencode }}&page={{ page.next_page_number }}">Next &raquo;</a>
-      {% else %}<span></span>{% endif %}
+      {% if page.has_next %}<a class="btn-ink-outline btn-small" href="?q={{ query|urlencode }}&page={{ page.next_page_number }}">Next &raquo;</a>{% else %}<span></span>{% endif %}
     </nav>
   {% endif %}
-
 </div>
 {% endblock %}

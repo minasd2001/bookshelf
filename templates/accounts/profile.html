@@ -3,67 +3,49 @@
 {% block title %}{{ owner.username }} | Bookshelf{% endblock %}
 
 {% block content %}
-<div class="mx-auto" style="max-width: 800px;">
-  <div class="card border-0 shadow-sm mb-4">
-    <div class="card-body d-flex align-items-center gap-4 p-4">
+<style>
+  .profile-name { font-family: 'Fraunces', Georgia, serif; font-weight: 600; font-size: 1.9rem; margin: 0; }
+  .shelf-count { color: var(--bs-muted); font-size: .9rem; font-weight: 400; }
+  .profile-meta a { color: var(--bs-muted); }
+  .profile-meta a:hover { color: var(--bs-accent); }
+</style>
 
-      {% if profile.avatar %}
-        <img src="{{ profile.avatar.url }}" alt="{{ owner.username }}"
-             class="rounded-circle"
-             style="width: 120px; height: 120px; object-fit: cover;">
-      {% else %}
-        <div class="rounded-circle bg-secondary text-white d-flex
-                    align-items-center justify-content-center"
-             style="width: 120px; height: 120px; font-size: 2.5rem;">
-          {{ owner.username|first|upper }}
-        </div>
-      {% endif %}
+<div class="mx-auto pb-5" style="max-width: 920px;">
 
-      <div>
-        <h1 class="h3 mb-1">{{ owner.username }}</h1>
-        <div class="text-muted small mb-2">Member since {{ owner.date_joined|date:"F Y" }}</div>
-        <div class="text-muted small mb-2">
-          <a href="{% url 'followers_list' owner.username %}" class="text-muted">
-            {{ followers_count }} follower{{ followers_count|pluralize }}</a> ·
-          <a href="{% url 'following_list' owner.username %}" class="text-muted">
-            {{ following_count }} following</a>
-        </div>
-        {% if profile.bio %}
-          <p class="mb-2">{{ profile.bio|linebreaksbr }}</p>
-        {% else %}
-          <p class="text-muted mb-2">No bio yet.</p>
-        {% endif %}
-        {% include "social/follow_button.html" with person=owner following=following_ids %}
-        {% if user == owner %}
-          <a href="{% url 'profile_edit' %}" class="btn btn-outline-dark btn-sm">Edit profile</a>
-        {% endif %}
+  <div class="card-soft d-flex align-items-center gap-4 flex-wrap">
+    {% if profile.avatar %}
+      <img src="{{ profile.avatar.url }}" alt="{{ owner.username }}" class="avatar avatar-lg">
+    {% else %}
+      <div class="avatar avatar-lg">{{ owner.username|first|upper }}</div>
+    {% endif %}
+
+    <div class="flex-grow-1">
+      <h1 class="profile-name">{{ owner.username }}</h1>
+      <div class="profile-meta small text-muted mb-2">
+        Member since {{ owner.date_joined|date:"F Y" }} ·
+        <a href="{% url 'followers_list' owner.username %}">{{ followers_count }} follower{{ followers_count|pluralize }}</a> ·
+        <a href="{% url 'following_list' owner.username %}">{{ following_count }} following</a>
       </div>
-
+      {% if profile.bio %}<p class="mb-2">{{ profile.bio|linebreaksbr }}</p>{% else %}<p class="text-muted mb-2">No bio yet.</p>{% endif %}
+      {% if user == owner %}<a href="{% url 'profile_edit' %}" class="btn-ink-outline btn-small">Edit profile</a>{% endif %}
+      {% include "social/follow_button.html" with person=owner following=following_ids %}
     </div>
   </div>
 
-  <h2 class="h4 mb-3">Bookshelves</h2>
+  <div class="section-head"><h2>Bookshelves</h2></div>
 
   {% for label, shelf_books in shelves %}
     <div class="mb-4">
-      <h3 class="h5">
-        {{ label }}
-        <span class="badge bg-secondary">{{ shelf_books|length }}</span>
-      </h3>
-
+      <h3 class="h5 mb-3">{{ label }} <span class="shelf-count">{{ shelf_books|length }}</span></h3>
       {% if shelf_books %}
-        <div class="row">
+        <div class="row g-3">
           {% for book in shelf_books %}
-            <div class="col-4 col-md-2 mb-3">
-              <a href="{% url 'book_detail' book.pk %}" class="text-decoration-none">
-                {% if book.cover_url %}
-                  <img src="{{ book.cover_url }}" alt="Cover of {{ book.title }}"
-                      title="{{ book.title }}" class="img-fluid rounded">
-                {% else %}
-                  <div class="bg-secondary text-white small p-3 text-center rounded">
-                    {{ book.title }}
-                  </div>
-                {% endif %}
+            <div class="col-4 col-md-3 col-lg-2">
+              <a href="{% url 'book_detail' book.pk %}" class="book-card" title="{{ book.title }}">
+                <div class="book-cover">
+                  {% if book.cover_url %}<img src="{{ book.cover_url }}" alt="Cover of {{ book.title }}">{% else %}<div class="no-cover small">{{ book.title }}</div>{% endif %}
+                </div>
+                <div class="book-ledge"></div>
               </a>
             </div>
           {% endfor %}
@@ -74,16 +56,20 @@
     </div>
   {% endfor %}
 
-  <h2 class="h4 mb-3">Reviews</h2>
+  <div class="section-head"><h2>Reviews</h2></div>
+
   {% for review in reviews %}
-    <div class="mb-3">
-      <a href="{% url 'book_detail' review.book.pk %}">{{ review.book.title }}</a>
-      <span class="text-warning">{{ review.stars }}</span>
-      {% if review.text %}<p class="mb-0">{{ review.text|linebreaksbr }}</p>{% endif %}
+    <div class="review-card">
+      <div class="review-head">
+        <a class="who" href="{% url 'book_detail' review.book.pk %}">{{ review.book.title }}</a>
+        <span class="review-stars">{{ review.stars }}</span>
+        <span class="review-date">{{ review.created|date:"j M Y" }}</span>
+      </div>
+      <p class="review-text">{{ review.text|linebreaksbr }}</p>
     </div>
   {% empty %}
-    <p class="text-muted">No reviews yet.</p>
+    <p class="text-muted">No written reviews yet.</p>
   {% endfor %}
-  
+
 </div>
 {% endblock %}

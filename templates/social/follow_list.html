@@ -3,28 +3,18 @@
 {% block title %}{{ title }} | {{ owner.username }}{% endblock %}
 
 {% block content %}
-<div class="mx-auto" style="max-width: 600px;">
-  <h1 class="h4 mb-1">{{ title }}</h1>
-  <p class="mb-4">
-    <a href="{% url 'profile_detail' owner.username %}">&laquo; {{ owner.username }}</a>
-  </p>
+<div class="mx-auto pb-5" style="max-width: 620px;">
+  <h1 class="page-title">{{ title }}</h1>
+  <p class="mb-4"><a href="{% url 'profile_detail' owner.username %}" class="text-muted">&laquo; {{ owner.username }}</a></p>
 
   {% for person in people %}
-    <div class="d-flex align-items-center gap-3 mb-3">
+    <div class="card-soft d-flex align-items-center gap-3 mb-2 py-2">
       {% if person.profile.avatar %}
-        <img src="{{ person.profile.avatar.url }}" alt="{{ person.username }}"
-             class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover;">
+        <img src="{{ person.profile.avatar.url }}" alt="{{ person.username }}" class="avatar avatar-sm">
       {% else %}
-        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
-             style="width: 48px; height: 48px;">
-          {{ person.username|first|upper }}
-        </div>
+        <div class="avatar avatar-sm">{{ person.username|first|upper }}</div>
       {% endif %}
-
-      <a href="{% url 'profile_detail' person.username %}" class="flex-grow-1 text-decoration-none">
-        {{ person.username }}
-      </a>
-
+      <a href="{% url 'profile_detail' person.username %}" class="flex-grow-1 nav-link-plain" style="color: var(--bs-ink);">{{ person.username }}</a>
       {% include "social/follow_button.html" with person=person following=following_ids %}
     </div>
   {% empty %}

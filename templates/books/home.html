@@ -3,36 +3,53 @@
 {% block title %}Home | Bookshelf{% endblock %}
 
 {% block content %}
+<style>
+  .home-hero { padding: 3rem 0 1.5rem; max-width: 38rem; }
+  .home-hero h1 { font-family: 'Fraunces', Georgia, serif; font-weight: 600; font-size: clamp(2rem, 4vw, 2.9rem); line-height: 1.1; letter-spacing: -0.01em; margin-bottom: .75rem; }
+  .home-hero h1 em { font-style: normal; color: var(--bs-accent); }
+  .home-hero p { color: var(--bs-muted); font-size: 1.05rem; margin: 0; }
+  .recs-panel { background: var(--bs-card); border: 1px solid var(--bs-line); border-radius: 14px; padding: .5rem 1.5rem 1.75rem; }
+</style>
+
+<section class="home-hero">
+  <h1>{% if user.is_authenticated %}Welcome back, <em>{{ user.username }}</em>.{% else %}Find your next <em>favourite</em> book.{% endif %}</h1>
+  <p>Track what you read, rate it, and see what other readers are loving.</p>
+</section>
+
 {% if recs %}
-  <h2 class="h4 mb-3">Recommended for you</h2>
-  <div class="row mb-4">
-    {% for rec in recs %}
-      <div class="col-6 col-md-2 mb-4">
-        <a href="{% url 'book_detail' rec.book.pk %}" class="text-decoration-none">
-          {% if rec.book.cover_url %}
-            <img src="{{ rec.book.cover_url }}" alt="Cover of {{ rec.book.title }}" class="img-fluid">
-          {% else %}
-            <div class="bg-secondary text-white p-4 text-center">No cover</div>
-          {% endif %}
-          <div class="mt-2">{{ rec.book.title }}</div>
-        </a>
-        <div class="text-muted small">{{ rec.reasons.0 }}</div>
-      </div>
-    {% endfor %}
+  <div class="recs-panel">
+    <div class="section-head"><h2>Recommended for you</h2></div>
+    <div class="row g-4">
+      {% for rec in recs %}
+        <div class="col-6 col-md-4 col-lg-2">
+          <a href="{% url 'book_detail' rec.book.pk %}" class="book-card">
+            <div class="book-cover">
+              {% if rec.book.cover_url %}<img src="{{ rec.book.cover_url }}" alt="Cover of {{ rec.book.title }}">{% else %}<div class="no-cover">No cover</div>{% endif %}
+            </div>
+            <div class="book-ledge"></div>
+            <div class="book-title">{{ rec.book.title }}</div>
+          </a>
+          <div class="book-reason">{{ rec.reasons.0 }}</div>
+        </div>
+      {% endfor %}
+    </div>
   </div>
 {% endif %}
-<h1>Some popular books</h1>
 
-<div class="row">
+<div class="section-head">
+  <h2>Popular books</h2>
+  <span>What readers are shelving right now</span>
+</div>
+
+<div class="row g-4 pb-5">
   {% for book in books %}
-    <div class="col-6 col-md-2 mb-4">
-      <a href="{% url 'book_detail' book.pk %}" class="text-decoration-none">
-        {% if book.cover_url %}
-          <img src="{{ book.cover_url }}" alt="Cover of {{ book.title }}" class="img-fluid">
-        {% else %}
-          <div class="bg-secondary text-white p-4 text-center">No cover</div>
-        {% endif %}
-        <div class="mt-2">{{ book.title }}</div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <a href="{% url 'book_detail' book.pk %}" class="book-card">
+        <div class="book-cover">
+          {% if book.cover_url %}<img src="{{ book.cover_url }}" alt="Cover of {{ book.title }}">{% else %}<div class="no-cover">No cover</div>{% endif %}
+        </div>
+        <div class="book-ledge"></div>
+        <div class="book-title">{{ book.title }}</div>
       </a>
     </div>
   {% endfor %}
