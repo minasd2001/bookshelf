@@ -1,0 +1,10 @@
+@"
+venv/
+__pycache__/
+*.pyc
+*.sqlite3
+*.bak
+media/
+data/*.csv
+.vscode/
+"@ | Set-Content -Encoding ascii .gitignore

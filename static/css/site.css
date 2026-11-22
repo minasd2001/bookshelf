@@ -101,3 +101,7 @@ a:hover { color: var(--bs-ink); }
 .styled-form .errorlist { color: #ffa3b1; list-style: none; padding: 0; margin: .25rem 0; font-size: .85rem; }
 
 @media (prefers-reduced-motion: reduce) { .book-cover, .shelf-btn, .star-input label { transition: none; } }
+
+.flash { padding: .6rem 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--bs-line); background: var(--bs-card); }
+.flash-success { border-color: #3f9d6b; }
+.flash-error { border-color: #d0566b; }

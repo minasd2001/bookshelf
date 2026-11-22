@@ -33,6 +33,11 @@
   </nav>
 
   <div class="container pt-4">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="flash flash-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
     {% block content %}{% endblock %}
   </div>
 </body>
