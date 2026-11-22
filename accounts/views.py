@@ -10,6 +10,7 @@ from social.services import reviews_by_user, shelves_for
 from social.services import (
     followers_of, following_ids, following_of, reviews_by_user, shelves_for,
 )
+from django.core.paginator import Paginator
 # Create your views here.
 
 def register(request):
@@ -52,4 +53,7 @@ def profile_edit(request):
     else:
         form = ProfileForm(instance=profile)
     return render(request, "accounts/profile_edit.html", {"form": form})
+
+
+
 

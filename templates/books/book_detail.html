@@ -4,55 +4,24 @@
 
 {% block content %}
 <style>
-  .detail-cover-wrap { max-width: 260px; }
-  .detail-title {
-    font-family: 'Fraunces', Georgia, serif;
-    font-weight: 600;
-    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-    margin-bottom: .4rem;
-  }
+  .detail-cover-wrap { max-width: 230px; }
+  .detail-title { font-family: 'Fraunces', Georgia, serif; font-weight: 600; font-size: clamp(1.8rem, 3.5vw, 2.6rem); line-height: 1.1; margin-bottom: .4rem; }
   .detail-authors { color: var(--bs-muted); font-size: 1.05rem; margin-bottom: 1rem; }
-
   .rating-line { display: flex; align-items: baseline; gap: .5rem; margin-bottom: 1rem; }
-  .rating-line .star { color: var(--bs-accent); font-size: 1.4rem; }
+  .rating-line .star { color: var(--bs-star); font-size: 1.4rem; }
   .rating-line .score { font-family: 'Fraunces', Georgia, serif; font-size: 1.8rem; font-weight: 600; }
   .rating-line .count { color: var(--bs-muted); font-size: .9rem; }
-
-  .shelf-btn {
-    border: 1px solid var(--bs-ink);
-    background: transparent;
-    color: var(--bs-ink);
-    border-radius: 999px;
-    padding: .35rem .9rem;
-    font-size: .88rem;
-    font-weight: 500;
-    transition: background .15s ease, color .15s ease;
-  }
-  .shelf-btn:hover { background: rgba(31, 42, 68, .08); }
-  .shelf-btn.active { background: var(--bs-ink); color: #fff; }
-
   .synopsis { max-width: 42rem; line-height: 1.65; }
-
   .dist { margin-top: 1.75rem; }
   .dist h3 { font-family: 'Fraunces', Georgia, serif; font-size: 1.05rem; margin-bottom: .6rem; }
   .dist-row { display: flex; align-items: center; gap: .6rem; font-size: .82rem; margin-bottom: .35rem; }
-  .dist-row .label { width: 2rem; color: var(--bs-muted); }
+  .dist-row .label { width: 2rem; color: var(--bs-star); }
   .dist-row .pct { width: 2.6rem; text-align: right; color: var(--bs-muted); }
-  .dist-track { flex: 1; height: 8px; background: var(--bs-line); border-radius: 99px; overflow: hidden; }
-  .dist-fill { height: 100%; background: var(--bs-accent); border-radius: 99px; }
-
-  .review-form-card, .review-card {
-    background: var(--bs-card);
-    border: 1px solid var(--bs-line);
-    border-radius: 12px;
-    padding: 1rem 1.25rem;
-  }
-
+  .dist-track { flex: 1; height: 8px; background: rgba(255,255,255,.12); border-radius: 99px; overflow: hidden; }
+  .dist-fill { height: 100%; background: var(--bs-star); border-radius: 99px; }
 </style>
 
-<div class="row g-5 pt-4 pb-5">
+<div class="row g-5 pt-3 pb-5">
 
   <aside class="col-md-4 col-lg-3">
     <div class="detail-cover-wrap">
@@ -115,17 +84,11 @@
         </div>
       </form>
     {% else %}
-      <p class="text-muted mb-4">
-        <a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to add this book to a shelf.
-      </p>
+      <p class="text-muted mb-4"><a href="{% url 'login' %}?next={{ request.path }}">Log in</a> to add this book to a shelf.</p>
     {% endif %}
 
     <div class="synopsis">
-      {% if book.synopsis %}
-        <p>{{ book.synopsis|linebreaksbr }}</p>
-      {% else %}
-        <p class="text-muted">No synopsis available.</p>
-      {% endif %}
+      {% if book.synopsis %}<p>{{ book.synopsis|linebreaksbr }}</p>{% else %}<p class="text-muted">No synopsis available.</p>{% endif %}
     </div>
 
     <div class="section-head"><h2>Reviews</h2></div>
@@ -135,23 +98,19 @@
         <form action="{% url 'review_save' book.pk %}" method="post">
           {% csrf_token %}
           <div class="small text-muted mb-1">Your rating</div>
-          <div class="mb-2">
-            {% for radio in review_form.rating %}
-              <div class="form-check form-check-inline">
-                {{ radio.tag }}
-                <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}★</label>
-              </div>
+          <div class="star-input mb-2">
+            {% for radio in review_form.rating reversed %}
+              {{ radio.tag }}
+              <label for="{{ radio.id_for_label }}" title="{{ radio.choice_label }} star{{ radio.choice_label|pluralize }}">★</label>
             {% endfor %}
           </div>
           <div class="mb-3">{{ review_form.text }}</div>
-          <button type="submit" class="btn-ink">
-            {% if my_review %}Update review{% else %}Post review{% endif %}
-          </button>
+          <button type="submit" class="btn-ink">{% if my_review %}Update review{% else %}Post review{% endif %}</button>
         </form>
         {% if my_review %}
           <form action="{% url 'review_delete' book.pk %}" method="post" class="mt-2">
             {% csrf_token %}
-            <button type="submit" class="shelf-remove text-danger">Delete my review</button>
+            <button type="submit" class="shelf-remove">Delete my review</button>
           </form>
         {% endif %}
       </div>

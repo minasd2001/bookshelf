@@ -1,15 +1,15 @@
 {% if user.is_authenticated and user != person %}
   {% if person.id in following %}
-    <form action="{% url 'unfollow_user' person.username %}" method="post" class="d-inline">
+    <form action="{% url 'unfollow_user' person.username %}" method="post" class="d-inline m-0">
       {% csrf_token %}
       <input type="hidden" name="next" value="{{ request.path }}">
-      <button type="submit" class="btn btn-sm btn-dark">Unfollow</button>
+      <button type="submit" class="btn-ink-outline btn-small">Unfollow</button>
     </form>
   {% else %}
-    <form action="{% url 'follow_user' person.username %}" method="post" class="d-inline">
+    <form action="{% url 'follow_user' person.username %}" method="post" class="d-inline m-0">
       {% csrf_token %}
       <input type="hidden" name="next" value="{{ request.path }}">
-      <button type="submit" class="btn btn-sm btn-outline-dark">Follow</button>
+      <button type="submit" class="btn-ink btn-small">Follow</button>
     </form>
   {% endif %}
 {% endif %}
