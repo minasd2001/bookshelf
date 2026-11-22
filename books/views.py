@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Book
+from .models import Book, Author
 from django.core.paginator import Paginator
 from django.db.models import Q, Avg # for multiple field search
 from social import services as shelf_services
@@ -54,3 +54,17 @@ def search(request):
     page = paginator.get_page(request.GET.get("page")) #pick the page number from the address (?page=2)
 
     return render(request, "books/search.html", {"query": query, "page": page})
+
+def author_detail(request, pk):
+    author = get_object_or_404(Author, pk=pk)
+    books = (
+        Book.objects.filter(authors=author)
+        .order_by("title")
+    ) 
+    paginator = Paginator(books, 20) # paginator splits long list of results into pages
+    page = paginator.get_page(request.GET.get("page"))
+    return render(
+            request,
+            "books/author_detail.html",
+            {"author":author, "page" : page},
+        )
