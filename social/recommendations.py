@@ -3,12 +3,19 @@ from social.models import ShelfEntry, Review
 from dataclasses import dataclass
 from django.db.models import Avg, Count, ExpressionWrapper, F, FloatField
 from social import services
+from typing import Protocol
 
 @dataclass
 class Suggestion:
     book : Book
     score : float
     reason : str
+
+class Strategy(Protocol):
+    weight: float
+
+    def suggest(self, user, exclude_ids, limit) -> list[Suggestion]: ...
+
 
 class FreindsLikedStrategy:
     weight = 3.0
@@ -90,7 +97,7 @@ class PopularStrategy:
 #return a dict that has all of them
 # group by each one
 class Recommender:
-    def __init__(self, strategies):
+    def __init__(self, strategies: list[Strategy]):
         self.strategies = strategies
 
     def for_user(self, user, limit=12):
